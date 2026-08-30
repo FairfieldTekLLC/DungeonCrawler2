@@ -9,7 +9,7 @@
 | Paladin | Tank / healer | holy shields, auras, judgments | Templar, Dawnkeeper, Inquisitor | Radiant Crusade, Divine Bastion |
 | Necromancer | DPS / summons | curses, undead minions, soul spenders | Bonelord, Cursemaster, Soulbinder | Army of the Veil, Soul Eclipse |
 | Bard | Support / control | songs, rhythm combos, morale buffs | Virtuoso, Skald, Mesmer | Anthem of Legends, Encore of Fate |
-| Summoner | Pet DPS / utility | elemental and spirit companions | Eidolist, Primalist, Pactbinder | Grand Convergence, Avatar Gate |
+| Summoner | Pet DPS / utility | elemental and spirit companions | Eidolonist, Primalist, Pactbinder | Grand Convergence, Avatar Gate |
 | Artificer | Hybrid / engineer | turrets, gadgets, runic tech | Machinist, Alchemical Savant, Runegunner | Clockwork Colossus, Singularity Engine |
 
 ### Ability Structure

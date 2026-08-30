@@ -98,7 +98,8 @@ CREATE TABLE auction_listings (
     current_bid BIGINT, -- latest accepted bid amount
     current_bidder_character_id UUID REFERENCES characters(id), -- current highest bidder
     expires_at TIMESTAMPTZ NOT NULL,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE economy_ledger (
