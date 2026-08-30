@@ -1,6 +1,9 @@
 # ScriptableObject Definitions
 
 ```csharp
+using System.Collections.Generic;
+using UnityEngine;
+
 public abstract class AetherfallDefinition : ScriptableObject
 {
     [SerializeField] private string id;
@@ -15,39 +18,61 @@ public abstract class AetherfallDefinition : ScriptableObject
 [CreateAssetMenu(menuName = "Aetherfall/Character/Class")]
 public sealed class ClassDefinition : AetherfallDefinition
 {
-    public Role PrimaryRole;
-    public AbilityDefinition[] StartingAbilities;
-    public SpecializationDefinition[] Specializations;
-    public TalentTreeDefinition TalentTree;
+    [SerializeField] private Role primaryRole;
+    [SerializeField] private AbilityDefinition[] startingAbilities;
+    [SerializeField] private SpecializationDefinition[] specializations;
+    [SerializeField] private TalentTreeDefinition talentTree;
+
+    public Role PrimaryRole => primaryRole;
+    public IReadOnlyList<AbilityDefinition> StartingAbilities => startingAbilities;
+    public IReadOnlyList<SpecializationDefinition> Specializations => specializations;
+    public TalentTreeDefinition TalentTree => talentTree;
 }
 
 [CreateAssetMenu(menuName = "Aetherfall/Combat/Ability")]
 public sealed class AbilityDefinition : AetherfallDefinition
 {
-    public float CooldownSeconds;
-    public float ResourceCost;
-    public TargetingMode TargetingMode;
-    public EffectDefinition[] Effects;
-    public StatusEffectDefinition[] AppliedStatusEffects;
+    [SerializeField] private float cooldownSeconds;
+    [SerializeField] private float resourceCost;
+    [SerializeField] private TargetingMode targetingMode;
+    [SerializeField] private EffectDefinition[] effects;
+    [SerializeField] private StatusEffectDefinition[] appliedStatusEffects;
+
+    public float CooldownSeconds => cooldownSeconds;
+    public float ResourceCost => resourceCost;
+    public TargetingMode TargetingMode => targetingMode;
+    public IReadOnlyList<EffectDefinition> Effects => effects;
+    public IReadOnlyList<StatusEffectDefinition> AppliedStatusEffects => appliedStatusEffects;
 }
 
 [CreateAssetMenu(menuName = "Aetherfall/Items/Item")]
 public sealed class ItemDefinition : AetherfallDefinition
 {
-    public ItemCategory Category;
-    public EquipmentSlot Slot;
-    public Rarity MinimumRarity;
-    public StatModifier[] BaseStats;
-    public SocketRule SocketRule;
+    [SerializeField] private ItemCategory category;
+    [SerializeField] private EquipmentSlot slot;
+    [SerializeField] private Rarity minimumRarity;
+    [SerializeField] private StatModifier[] baseStats;
+    [SerializeField] private SocketRule socketRule;
+
+    public ItemCategory Category => category;
+    public EquipmentSlot Slot => slot;
+    public Rarity MinimumRarity => minimumRarity;
+    public IReadOnlyList<StatModifier> BaseStats => baseStats;
+    public SocketRule SocketRule => socketRule;
 }
 
 [CreateAssetMenu(menuName = "Aetherfall/Companion/Companion")]
 public sealed class CompanionDefinition : AetherfallDefinition
 {
-    public CompanionClass Class;
-    public PersonalityTraits BaseTraits;
-    public TalentTreeDefinition ClassTree;
-    public QuestDefinition[] PersonalQuests;
+    [SerializeField] private CompanionClass companionClass;
+    [SerializeField] private PersonalityTraits baseTraits;
+    [SerializeField] private TalentTreeDefinition classTree;
+    [SerializeField] private QuestDefinition[] personalQuests;
+
+    public CompanionClass Class => companionClass;
+    public PersonalityTraits BaseTraits => baseTraits;
+    public TalentTreeDefinition ClassTree => classTree;
+    public IReadOnlyList<QuestDefinition> PersonalQuests => personalQuests;
 }
 ```
 
