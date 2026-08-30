@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Server/" />
+  <Folder Name="/Server/src/">
+    <Project Path="Server/src/Aetherfall.Api/Aetherfall.Api.csproj" />
+    <Project Path="Server/src/Aetherfall.Application/Aetherfall.Application.csproj" />
+    <Project Path="Server/src/Aetherfall.Contracts/Aetherfall.Contracts.csproj" />
+    <Project Path="Server/src/Aetherfall.Domain.Tests/Aetherfall.Domain.Tests.csproj" />
+    <Project Path="Server/src/Aetherfall.Domain/Aetherfall.Domain.csproj" />
+    <Project Path="Server/src/Aetherfall.Infrastructure/Aetherfall.Infrastructure.csproj" />
+  </Folder>
+</Solution>
