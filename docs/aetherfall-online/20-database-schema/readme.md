@@ -100,12 +100,14 @@ CREATE TABLE auction_listings (
     current_bidder_character_id UUID REFERENCES characters(id), -- current highest bidder
     expires_at TIMESTAMPTZ NOT NULL,
     status TEXT NOT NULL,
-    version BIGINT NOT NULL DEFAULT 0
+    version BIGINT NOT NULL DEFAULT 0,
+    CHECK (buyout_price IS NOT NULL OR bid_price IS NOT NULL)
 );
 
 CREATE TABLE economy_ledger (
     id UUID PRIMARY KEY,
     actor_character_id UUID REFERENCES characters(id), -- nullable for system-generated events such as tax collection or auction expiry
+    target_character_id UUID REFERENCES characters(id), -- balance owner credited or debited by the ledger entry
     event_type TEXT NOT NULL,
     amount BIGINT NOT NULL,
     metadata JSONB NOT NULL,
@@ -118,6 +120,9 @@ CREATE UNIQUE INDEX auction_listings_active_item_idx
 
 CREATE INDEX economy_ledger_actor_idx
     ON economy_ledger (actor_character_id);
+
+CREATE INDEX economy_ledger_target_idx
+    ON economy_ledger (target_character_id);
 
 CREATE INDEX economy_ledger_created_at_idx
     ON economy_ledger (created_at);
