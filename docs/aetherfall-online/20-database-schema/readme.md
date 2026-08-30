@@ -70,7 +70,8 @@ CREATE TABLE companions (
     loyalty INT NOT NULL,
     traits JSONB NOT NULL,
     memories JSONB NOT NULL,
-    skill_trees JSONB NOT NULL
+    skill_trees JSONB NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE guilds (
@@ -104,7 +105,7 @@ CREATE TABLE auction_listings (
 
 CREATE TABLE economy_ledger (
     id UUID PRIMARY KEY,
-    actor_character_id UUID REFERENCES characters(id),
+    actor_character_id UUID REFERENCES characters(id), -- nullable for system-generated events such as tax collection or auction expiry
     event_type TEXT NOT NULL,
     amount BIGINT NOT NULL,
     metadata JSONB NOT NULL,
