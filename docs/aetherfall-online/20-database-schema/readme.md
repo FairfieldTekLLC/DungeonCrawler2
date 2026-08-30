@@ -111,4 +111,14 @@ CREATE TABLE economy_ledger (
     metadata JSONB NOT NULL,
     created_at TIMESTAMPTZ NOT NULL
 );
+
+CREATE UNIQUE INDEX auction_listings_active_item_idx
+    ON auction_listings (item_id)
+    WHERE status = 'active';
+
+CREATE INDEX economy_ledger_actor_idx
+    ON economy_ledger (actor_character_id);
+
+CREATE INDEX economy_ledger_created_at_idx
+    ON economy_ledger (created_at);
 ```
