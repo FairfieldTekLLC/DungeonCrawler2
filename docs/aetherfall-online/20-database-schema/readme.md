@@ -109,9 +109,10 @@ CREATE TABLE economy_ledger (
     actor_character_id UUID REFERENCES characters(id), -- nullable for system-generated events such as tax collection or auction expiry
     target_character_id UUID REFERENCES characters(id), -- balance owner credited or debited by the ledger entry
     event_type TEXT NOT NULL,
-    amount BIGINT NOT NULL,
+    amount BIGINT NOT NULL, -- positive credits target_character_id, negative debits target_character_id
     metadata JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL
+    created_at TIMESTAMPTZ NOT NULL,
+    CHECK (amount <> 0)
 );
 
 CREATE UNIQUE INDEX auction_listings_active_item_idx
