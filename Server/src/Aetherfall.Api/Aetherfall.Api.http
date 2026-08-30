@@ -1,0 +1,6 @@
+@Aetherfall.Api_HostAddress = http://localhost:5148
+
+GET {{Aetherfall.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
