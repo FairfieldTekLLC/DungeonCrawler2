@@ -3,9 +3,13 @@
 ```csharp
 public abstract class AetherfallDefinition : ScriptableObject
 {
-    public string Id;
-    public string DisplayName;
-    [TextArea] public string Description;
+    [SerializeField] private string id;
+    [SerializeField] private string displayName;
+    [SerializeField, TextArea] private string description;
+
+    public string Id => id;
+    public string DisplayName => displayName;
+    public string Description => description;
 }
 
 [CreateAssetMenu(menuName = "Aetherfall/Character/Class")]

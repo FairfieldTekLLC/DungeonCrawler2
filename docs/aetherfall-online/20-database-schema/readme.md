@@ -94,9 +94,9 @@ CREATE TABLE auction_listings (
     seller_character_id UUID NOT NULL REFERENCES characters(id),
     item_id UUID NOT NULL REFERENCES items(id),
     buyout_price BIGINT,
-    bid_price BIGINT,
-    current_bid BIGINT,
-    current_bidder_character_id UUID REFERENCES characters(id),
+    bid_price BIGINT, -- minimum opening bid
+    current_bid BIGINT, -- latest accepted bid amount
+    current_bidder_character_id UUID REFERENCES characters(id), -- current highest bidder
     expires_at TIMESTAMPTZ NOT NULL,
     status TEXT NOT NULL
 );
