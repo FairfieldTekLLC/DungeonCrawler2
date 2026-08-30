@@ -1,0 +1,40 @@
+# Aetherfall Online Documentation
+
+Each major design, architecture, and production topic is documented in its own `readme.md` file.
+
+1. [Full Game Design Document](01-full-game-design-document/readme.md)
+2. [Complete World Lore](02-complete-world-lore/readme.md)
+3. [Historical Timeline](03-historical-timeline/readme.md)
+4. [Main Story](04-main-story/readme.md)
+5. [Character Systems](05-character-systems/readme.md)
+6. [Class Designs](06-class-designs/readme.md)
+7. [Skill Trees](07-skill-trees/readme.md)
+8. [Combat Design](08-combat-design/readme.md)
+9. [Crafting Design](09-crafting-design/readme.md)
+10. [Enchanting Design](10-enchanting-design/readme.md)
+11. [Runecrafting Design](11-runecrafting-design/readme.md)
+12. [Economy Design](12-economy-design/readme.md)
+13. [Guild Design](13-guild-design/readme.md)
+14. [Housing Design](14-housing-design/readme.md)
+15. [Companion Design](15-companion-design/readme.md)
+16. [Companion AI Architecture](16-companion-ai-architecture/readme.md)
+17. [Companion Relationships](17-companion-relationships/readme.md)
+18. [Companion Synergy Design](18-companion-synergy-design/readme.md)
+19. [Multiplayer Architecture](19-multiplayer-architecture/readme.md)
+20. [Database Schema](20-database-schema/readme.md)
+21. [UML Diagrams](21-uml-diagrams/readme.md)
+22. [Folder Structure](22-folder-structure/readme.md)
+23. [ScriptableObject Definitions](23-scriptableobject-definitions/readme.md)
+24. [Save System Design](24-save-system-design/readme.md)
+25. [Production-Ready C# Architecture](25-production-ready-csharp-architecture/readme.md)
+26. [Server Architecture](26-server-architecture/readme.md)
+27. [Anti-Cheat Design](27-anti-cheat-design/readme.md)
+28. [Endgame Systems](28-endgame-systems/readme.md)
+29. [Expansion Roadmap](29-expansion-roadmap/readme.md)
+30. [Full Production Plan](30-full-production-plan/readme.md)
+
+## Additional System Readmes
+
+- [Factions](factions/readme.md)
+- [Quest System](quest-system/readme.md)
+- [Inventory System](inventory-system/readme.md)

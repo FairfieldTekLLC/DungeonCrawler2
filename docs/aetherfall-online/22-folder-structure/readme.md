@@ -1,0 +1,45 @@
+# Folder Structure
+
+```text
+Assets/
+  Aetherfall/
+    Art/
+    Audio/
+    Prefabs/
+    Scenes/
+    ScriptableObjects/
+      Abilities/
+      Classes/
+      Companions/
+      Crafting/
+      Factions/
+      Items/
+      Quests/
+      Races/
+      StatusEffects/
+      Zones/
+    Scripts/
+      Client/
+      Shared/
+        Application/
+        Domain/
+        Infrastructure/
+        Presentation/
+      Server/
+        Combat/
+        Economy/
+        Guilds/
+        Inventory/
+        Persistence/
+        Quests/
+        World/
+      Tests/
+Server/
+  Aetherfall.Api/
+  Aetherfall.Gateway/
+  Aetherfall.Services.Economy/
+  Aetherfall.Services.Guilds/
+  Aetherfall.Services.Inventory/
+  Aetherfall.Services.World/
+  Aetherfall.Shared/
+```
