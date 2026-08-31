@@ -5,6 +5,25 @@ namespace Aetherfall.Domain.Combat
 {
     public static class CombatFormulaService
     {
+        // Attack damage multipliers
+        private const decimal LightAttackMultiplier = 1.0m;
+        private const decimal HeavyAttackMultiplier = 1.65m;
+
+        // Stamina costs per action
+        private const decimal LightAttackStaminaCost = 8m;
+        private const decimal HeavyAttackStaminaCost = 18m;
+        private const decimal BlockStaminaCost = 12m;
+        private const decimal DodgeStaminaCost = 20m;
+
+        // Mitigation and defense
+        private const decimal HeavyAttackBlockReduction = -0.15m;
+        private const decimal ArmorMitigationDivisor = 1000m;
+        private const decimal MaxMitigationCap = 0.85m;
+
+        // Critical hit mechanics
+        private const decimal CriticalHitThreshold = 0.92m;
+        private const decimal CriticalDamageMultiplier = 1.5m;
+
         /// <summary>
         /// Resolves a combat action between an attacker and defender.
         /// Returns a CombatResolution record containing damage dealt, stamina spent, and outcome flags.
@@ -12,11 +31,11 @@ namespace Aetherfall.Domain.Combat
         public static CombatResolution Resolve(CombatActionType actionType, CombatSnapshot attacker, CombatSnapshot defender, decimal critChanceSeed)
         {
             if (critChanceSeed is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(critChanceSeed));
-            
+
             var baseDamage = actionType switch
             {
-                CombatActionType.LightAttack => attacker.WeaponDamage * 1.0m,
-                CombatActionType.HeavyAttack => attacker.WeaponDamage * 1.65m,
+                CombatActionType.LightAttack => attacker.WeaponDamage * LightAttackMultiplier,
+                CombatActionType.HeavyAttack => attacker.WeaponDamage * HeavyAttackMultiplier,
                 CombatActionType.Block => 0m,
                 CombatActionType.Dodge => 0m,
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType))
@@ -24,10 +43,10 @@ namespace Aetherfall.Domain.Combat
 
             var staminaSpent = actionType switch
             {
-                CombatActionType.LightAttack => 8m,
-                CombatActionType.HeavyAttack => 18m,
-                CombatActionType.Block => 12m,
-                CombatActionType.Dodge => 20m,
+                CombatActionType.LightAttack => LightAttackStaminaCost,
+                CombatActionType.HeavyAttack => HeavyAttackStaminaCost,
+                CombatActionType.Block => BlockStaminaCost,
+                CombatActionType.Dodge => DodgeStaminaCost,
                 _ => 0m
             };
 
@@ -38,12 +57,12 @@ namespace Aetherfall.Domain.Combat
             }
 
             var mitigation = defender.IsBlocking
-                ? defender.BlockMitigation + (actionType == CombatActionType.HeavyAttack ? -0.15m : 0m)
-                : defender.Armor / 1000m;
+                ? defender.BlockMitigation + (actionType == CombatActionType.HeavyAttack ? HeavyAttackBlockReduction : 0m)
+                : defender.Armor / ArmorMitigationDivisor;
 
-            mitigation = Math.Clamp(mitigation, 0m, 0.85m);
-            var critical = critChanceSeed >= 0.92m;
-            var damage = baseDamage * (1 - mitigation) * (critical ? 1.5m : 1m);
+            mitigation = Math.Clamp(mitigation, 0m, MaxMitigationCap);
+            var critical = critChanceSeed >= CriticalHitThreshold;
+            var damage = baseDamage * (1 - mitigation) * (critical ? CriticalDamageMultiplier : 1m);
 
             return new CombatResolution(decimal.Round(Math.Max(0, damage), 2), staminaSpent, false, defender.IsBlocking, critical);
         }

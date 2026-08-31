@@ -8,17 +8,50 @@ namespace Aetherfall.Domain.Crafting
     /// </summary>
     public static class CraftingFormulaService
     {
+        // Quality score calculation weights
+        private const double CraftingSkillWeight = 0.40;
+        private const double MaterialQualityWeight = 0.25;
+        private const double SpecializationBonusWeight = 0.15;
+        private const double StationQualityWeight = 0.10;
+        private const double RandomRollWeight = 0.10;
+
+        // Critical chance breakpoints (skill level -> chance)
+        private const int MinSkillLevel = 25;
+        private const int SecondBreakpoint = 100;
+        private const int ThirdBreakpoint = 200;
+        private const int MaxSkillLevel = 300;
+
+        private const double MinCritChance = 0.01;
+        private const double SecondCritChance = 0.05;
+        private const double ThirdCritChance = 0.10;
+        private const double MaxCritChance = 0.20;
+
+        // Quality tier thresholds
+        private const double MythicThreshold = 85;
+        private const double LegendaryThreshold = 70;
+        private const double EpicThreshold = 55;
+        private const double RareThreshold = 40;
+        private const double UncommonThreshold = 25;
+
+        // Quality tier names
+        private const string MythicTier = "Mythic";
+        private const string LegendaryTier = "Legendary";
+        private const string EpicTier = "Epic";
+        private const string RareTier = "Rare";
+        private const string UncommonTier = "Uncommon";
+        private const string CommonTier = "Common";
+
         /// <summary>
         /// Calculates the Quality Score for a crafted item.
         /// Formula: QualityScore = CraftingSkill * 0.40 + MaterialQuality * 0.25 + SpecializationBonus * 0.15 + StationQuality * 0.10 + RandomRoll * 0.10
         /// </summary>
         public static double CalculateQualityScore(int craftingSkill, double materialQuality, int specializationBonus, double stationQuality, double randomRoll)
         {
-            return (craftingSkill * 0.40)
-                 + (materialQuality * 0.25)
-                 + (specializationBonus * 0.15)
-                 + (stationQuality * 0.10)
-                 + (randomRoll * 0.10);
+            return (craftingSkill * CraftingSkillWeight)
+                 + (materialQuality * MaterialQualityWeight)
+                 + (specializationBonus * SpecializationBonusWeight)
+                 + (stationQuality * StationQualityWeight)
+                 + (randomRoll * RandomRollWeight);
         }
 
         /// <summary>
@@ -27,16 +60,16 @@ namespace Aetherfall.Domain.Crafting
         /// </summary>
         public static double CalculateCriticalChance(int skillLevel)
         {
-            if (skillLevel <= 25) return 0.01;
-            if (skillLevel >= 300) return 0.20;
+            if (skillLevel <= MinSkillLevel) return MinCritChance;
+            if (skillLevel >= MaxSkillLevel) return MaxCritChance;
 
             // Interpolate linearly between known breakpoints
-            if (skillLevel <= 100)
-                return 0.01 + ((skillLevel - 25) / (100 - 25)) * (0.05 - 0.01);
-            else if (skillLevel <= 200)
-                return 0.05 + ((skillLevel - 100) / (200 - 100)) * (0.10 - 0.05);
+            if (skillLevel <= SecondBreakpoint)
+                return MinCritChance + ((skillLevel - MinSkillLevel) / (double)(SecondBreakpoint - MinSkillLevel)) * (SecondCritChance - MinCritChance);
+            else if (skillLevel <= ThirdBreakpoint)
+                return SecondCritChance + ((skillLevel - SecondBreakpoint) / (double)(ThirdBreakpoint - SecondBreakpoint)) * (ThirdCritChance - SecondCritChance);
             else
-                return 0.10 + ((skillLevel - 200) / (300 - 200)) * (0.20 - 0.10);
+                return ThirdCritChance + ((skillLevel - ThirdBreakpoint) / (double)(MaxSkillLevel - ThirdBreakpoint)) * (MaxCritChance - ThirdCritChance);
         }
 
         /// <summary>
@@ -60,12 +93,12 @@ namespace Aetherfall.Domain.Crafting
         {
             return qualityScore switch
             {
-                >= 85 => "Mythic",
-                >= 70 => "Legendary",
-                >= 55 => "Epic",
-                >= 40 => "Rare",
-                >= 25 => "Uncommon",
-                _ => "Common"
+                >= MythicThreshold => MythicTier,
+                >= LegendaryThreshold => LegendaryTier,
+                >= EpicThreshold => EpicTier,
+                >= RareThreshold => RareTier,
+                >= UncommonThreshold => UncommonTier,
+                _ => CommonTier
             };
         }
 

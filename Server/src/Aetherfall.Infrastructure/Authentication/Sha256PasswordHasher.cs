@@ -14,5 +14,11 @@ public sealed class Sha256PasswordHasher : IPasswordHasher
     }
 
     public bool Verify(string password, string hash)
-        => string.Equals(Hash(password), hash, StringComparison.Ordinal);
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
+        ArgumentException.ThrowIfNullOrWhiteSpace(hash);
+
+        var computedHash = Hash(password);
+        return string.Equals(computedHash, hash, StringComparison.Ordinal);
+    }
 }

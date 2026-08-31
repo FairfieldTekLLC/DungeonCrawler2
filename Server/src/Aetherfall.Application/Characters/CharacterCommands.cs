@@ -1,4 +1,5 @@
 using Aetherfall.Application.Abstractions;
+using Aetherfall.Application.Common;
 using Aetherfall.Contracts.Characters;
 using Aetherfall.Domain.Characters;
 using Aetherfall.Domain.Inventory;
@@ -9,6 +10,13 @@ public sealed record CreateCharacterCommand(string AccountId, string Name, Domai
 
 public sealed class CreateCharacterHandler : ICommandHandler<CreateCharacterCommand, CharacterSummaryResponse>
 {
+    // Initial character stats
+    private const int StartingLevel = 1;
+    private const decimal StartingWeaponDamage = 12m;
+    private const decimal StartingSpellPower = 14m;
+    private const decimal StartingCriticalChance = 0.05m;
+    private const int StartingInventoryCapacity = 120;
+
     private readonly ICharacterRepository _characters;
 
     public CreateCharacterHandler(ICharacterRepository characters)
@@ -19,11 +27,12 @@ public sealed class CreateCharacterHandler : ICommandHandler<CreateCharacterComm
     public async Task<Result<CharacterSummaryResponse>> HandleAsync(CreateCharacterCommand command, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(command.AccountId, out _)) return Result<CharacterSummaryResponse>.Failure("Account id is invalid.");
-        if (string.IsNullOrWhiteSpace(command.Name) || command.Name.Length < 3) return Result<CharacterSummaryResponse>.Failure("Character name must be at least 3 characters.");
+        if (string.IsNullOrWhiteSpace(command.Name) || command.Name.Length < ValidationConstants.MinCharacterNameLength) 
+            return Result<CharacterSummaryResponse>.Failure($"Character name must be at least {ValidationConstants.MinCharacterNameLength} characters.");
 
         var attributes = new CharacterAttributes(command.Strength, command.Dexterity, command.Intelligence, command.Vitality, command.Wisdom, command.Luck);
-        var stats = CharacterFormulaService.Calculate(1, attributes, 12m, 14m, 0.05m);
-        var character = new CharacterAggregate(Guid.NewGuid(), command.AccountId, command.Name, command.ClassType, attributes, stats, new InventoryAggregate(Guid.NewGuid(), 120));
+        var stats = CharacterFormulaService.Calculate(StartingLevel, attributes, StartingWeaponDamage, StartingSpellPower, StartingCriticalChance);
+        var character = new CharacterAggregate(Guid.NewGuid(), command.AccountId, command.Name, command.ClassType, attributes, stats, new InventoryAggregate(Guid.NewGuid(), StartingInventoryCapacity));
         await _characters.AddAsync(character, cancellationToken);
 
         return Result<CharacterSummaryResponse>.Success(new CharacterSummaryResponse(character.Id, character.Name, character.ClassType, character.Progression.Level, character.Stats.MaxHealth, character.Stats.MaxMana, character.Stats.MaxStamina));

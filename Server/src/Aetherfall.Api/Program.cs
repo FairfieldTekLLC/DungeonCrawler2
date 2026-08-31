@@ -1,5 +1,6 @@
 using System.Text;
 using Aetherfall.Application.DependencyInjection;
+using Aetherfall.Infrastructure.Authentication;
 using Aetherfall.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +12,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddAetherfallApplication();
 builder.Services.AddAetherfallInfrastructure();
 
-var jwtKey = builder.Configuration["Authentication:JwtKey"] ?? throw new InvalidOperationException("JWT key missing.");
+var jwtKey = builder.Configuration[JwtConstants.ConfigurationKey] ?? throw new InvalidOperationException("JWT key missing.");
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
 builder.Services
@@ -23,8 +24,8 @@ builder.Services
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "Aetherfall.Api",
-            ValidAudience = "Aetherfall.Client",
+            ValidIssuer = JwtConstants.Issuer,
+            ValidAudience = JwtConstants.Audience,
             IssuerSigningKey = signingKey,
             ClockSkew = TimeSpan.FromMinutes(1)
         };

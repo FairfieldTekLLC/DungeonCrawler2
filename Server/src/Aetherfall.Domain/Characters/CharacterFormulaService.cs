@@ -4,30 +4,71 @@ namespace Aetherfall.Domain.Characters
 {
     public static class CharacterFormulaService
     {
-        public static int CalculateHealth(int level, int vitality) => 100 + level * 18 + vitality * 12;
-        public static int CalculateMana(int level, int intelligence, int wisdom) => 50 + level * 8 + intelligence * 8 + wisdom * 4;
-        public static int CalculateStamina(int level, int dexterity, int vitality) => 75 + level * 6 + dexterity * 3 + vitality * 5;
+        // Health calculation constants
+        private const int BaseHealth = 100;
+        private const int HealthPerLevel = 18;
+        private const int HealthPerVitality = 12;
+
+        // Mana calculation constants
+        private const int BaseMana = 50;
+        private const int ManaPerLevel = 8;
+        private const int ManaPerIntelligence = 8;
+        private const int ManaPerWisdom = 4;
+
+        // Stamina calculation constants
+        private const int BaseStamina = 75;
+        private const int StaminaPerLevel = 6;
+        private const int StaminaPerDexterity = 3;
+        private const int StaminaPerVitality = 5;
+
+        // Damage calculation coefficients
+        private const double StrengthDamageCoefficient = 0.006;
+        private const double DexterityPhysicalDamageCoefficient = 0.002;
+        private const double IntelligenceDamageCoefficient = 0.007;
+        private const double WisdomDamageCoefficient = 0.002;
+
+        // Healing calculation coefficients
+        private const double WisdomHealingCoefficient = 0.007;
+        private const double IntelligenceHealingCoefficient = 0.002;
+
+        // Critical chance calculation
+        private const double MaxCriticalChance = 0.5;
+        private const double DexterityCritCoefficient = 0.0008;
+        private const double LuckCritCoefficient = 0.0006;
+
+        // Attribute caps
+        private const int DefaultSoftCap = 250;
+        private const int DefaultHardCap = 400;
+
+        public static int CalculateHealth(int level, int vitality) 
+            => BaseHealth + level * HealthPerLevel + vitality * HealthPerVitality;
+
+        public static int CalculateMana(int level, int intelligence, int wisdom) 
+            => BaseMana + level * ManaPerLevel + intelligence * ManaPerIntelligence + wisdom * ManaPerWisdom;
+
+        public static int CalculateStamina(int level, int dexterity, int vitality) 
+            => BaseStamina + level * StaminaPerLevel + dexterity * StaminaPerDexterity + vitality * StaminaPerVitality;
 
         public static double CalculatePhysicalDamage(double weaponDamage, int strength, int dexterity)
-            => weaponDamage * (1 + strength * 0.006 + dexterity * 0.002);
+            => weaponDamage * (1 + strength * StrengthDamageCoefficient + dexterity * DexterityPhysicalDamageCoefficient);
 
         public static double CalculateSpellDamage(double spellPower, int intelligence, int wisdom)
-            => spellPower * (1 + intelligence * 0.007 + wisdom * 0.002);
+            => spellPower * (1 + intelligence * IntelligenceDamageCoefficient + wisdom * WisdomDamageCoefficient);
 
         public static double CalculateHealing(double baseHeal, int wisdom, int intelligence)
-            => baseHeal * (1 + wisdom * 0.007 + intelligence * 0.002);
+            => baseHeal * (1 + wisdom * WisdomHealingCoefficient + intelligence * IntelligenceHealingCoefficient);
 
         public static double CalculateCriticalChance(double baseCrit, int dexterity, int luck)
-            => Math.Min(0.5, baseCrit + dexterity * 0.0008 + luck * 0.0006);
+            => Math.Min(MaxCriticalChance, baseCrit + dexterity * DexterityCritCoefficient + luck * LuckCritCoefficient);
 
-        public static int ApplyAttributeCaps(int value, int softCap = 250, int hardCap = 400)
+        public static int ApplyAttributeCaps(int value, int softCap = DefaultSoftCap, int hardCap = DefaultHardCap)
         {
             if (value <= softCap) return value;
             if (value <= hardCap) return softCap + (value - softCap) / 2;
             return hardCap;
         }
 
-        public static double ClampStat(double value, int softCap = 250, int hardCap = 400)
+        public static double ClampStat(double value, int softCap = DefaultSoftCap, int hardCap = DefaultHardCap)
         {
             if (value <= softCap) return value;
             if (value <= hardCap) return Math.Min(value, hardCap);
