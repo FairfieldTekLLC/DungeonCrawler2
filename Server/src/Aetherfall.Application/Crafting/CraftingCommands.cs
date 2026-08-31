@@ -2,6 +2,7 @@ using Aetherfall.Application.Abstractions;
 using Aetherfall.Contracts.Crafting;
 using Aetherfall.Domain.Crafting;
 using Aetherfall.Domain.Inventory;
+using Aetherfall.Domain.Common;
 
 namespace Aetherfall.Application.Crafting;
 
@@ -26,13 +27,20 @@ public sealed class CraftItemHandler : ICommandHandler<CraftItemCommand, CraftIt
         var recipe = await _recipes.GetByIdAsync(command.RecipeId, cancellationToken);
         if (recipe is null) return Result<CraftItemResponse>.Failure("Recipe not found.");
 
-        var qualityScore = CraftingFormulaService.CalculateQualityScore(recipe.RequiredSkill, command.MaterialQuality, command.SpecializationBonus, command.StationQuality, command.RandomRoll);
-        var rarity = CraftingFormulaService.ResolveRarity(qualityScore);
+        var qualityScore = CraftingFormulaService.CalculateQualityScore(
+            recipe.RequiredSkill, 
+            (double)command.MaterialQuality, 
+            (int)command.SpecializationBonus, 
+            (double)command.StationQuality, 
+            (double)command.RandomRoll);
+        
+        var rarityString = CraftingFormulaService.ResolveRarity(qualityScore);
+        var rarityEnum = Enum.Parse<Rarity>(rarityString);
         var critChance = CraftingFormulaService.CalculateCriticalChance(recipe.RequiredSkill);
 
-        character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarity, 1, Domain.Common.EquipmentSlot.MainHand));
+        character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarityEnum, 1, Domain.Common.EquipmentSlot.MainHand));
         await _characters.UpdateAsync(character, cancellationToken);
 
-        return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarity.ToString(), qualityScore, critChance));
+        return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarityString, (decimal)qualityScore, (decimal)critChance));
     }
 }

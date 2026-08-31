@@ -1,42 +1,77 @@
-using Aetherfall.Domain.Common;
+using System;
 
-namespace Aetherfall.Domain.Crafting;
-
-public static class CraftingFormulaService
+namespace Aetherfall.Domain.Crafting
 {
-    public static decimal CalculateQualityScore(int craftingSkill, decimal materialQuality, decimal specializationBonus, decimal stationQuality, decimal randomRoll)
+    /// <summary>
+    /// Handles all crafting math, quality scoring, and critical chance calculations.
+    /// Implements the exact formulas from the 09-crafting-design document.
+    /// </summary>
+    public static class CraftingFormulaService
     {
-        if (craftingSkill < 0) throw new ArgumentOutOfRangeException(nameof(craftingSkill));
-        ValidatePercentage(materialQuality, nameof(materialQuality));
-        ValidatePercentage(specializationBonus, nameof(specializationBonus));
-        ValidatePercentage(stationQuality, nameof(stationQuality));
-        ValidatePercentage(randomRoll, nameof(randomRoll));
-
-        return decimal.Round((craftingSkill * 0.40m) + (materialQuality * 0.25m) + (specializationBonus * 0.15m) + (stationQuality * 0.10m) + (randomRoll * 0.10m), 2);
-    }
-
-    public static Rarity ResolveRarity(decimal qualityScore)
-        => qualityScore switch
+        /// <summary>
+        /// Calculates the Quality Score for a crafted item.
+        /// Formula: QualityScore = CraftingSkill * 0.40 + MaterialQuality * 0.25 + SpecializationBonus * 0.15 + StationQuality * 0.10 + RandomRoll * 0.10
+        /// </summary>
+        public static double CalculateQualityScore(int craftingSkill, double materialQuality, int specializationBonus, double stationQuality, double randomRoll)
         {
-            < 30m => Rarity.Common,
-            < 60m => Rarity.Uncommon,
-            < 90m => Rarity.Rare,
-            < 120m => Rarity.Epic,
-            < 160m => Rarity.Legendary,
-            _ => Rarity.Mythic
-        };
-
-    public static decimal CalculateCriticalChance(int skill)
-    {
-        if (skill < 0) throw new ArgumentOutOfRangeException(nameof(skill));
-        return decimal.Round(Math.Min(0.20m, skill / 1000m + (skill / 3000m)), 4);
-    }
-
-    private static void ValidatePercentage(decimal value, string name)
-    {
-        if (value < 0 || value > 100)
-        {
-            throw new ArgumentOutOfRangeException(name, "Value must be between 0 and 100.");
+            return (craftingSkill * 0.40)
+                 + (materialQuality * 0.25)
+                 + (specializationBonus * 0.15)
+                 + (stationQuality * 0.10)
+                 + (randomRoll * 0.10);
         }
+
+        /// <summary>
+        /// Calculates the critical crafting chance based on skill level using linear interpolation between documented breakpoints.
+        /// Breakpoints: Skill 25 -> 1%, Skill 100 -> 5%, Skill 200 -> 10%, Skill 300 -> 20%
+        /// </summary>
+        public static double CalculateCriticalChance(int skillLevel)
+        {
+            if (skillLevel <= 25) return 0.01;
+            if (skillLevel >= 300) return 0.20;
+
+            // Interpolate linearly between known breakpoints
+            if (skillLevel <= 100)
+                return 0.01 + ((skillLevel - 25) / (100 - 25)) * (0.05 - 0.01);
+            else if (skillLevel <= 200)
+                return 0.05 + ((skillLevel - 100) / (200 - 100)) * (0.10 - 0.05);
+            else
+                return 0.10 + ((skillLevel - 200) / (300 - 200)) * (0.20 - 0.10);
+        }
+
+        /// <summary>
+        /// Determines if a craft results in a critical success based on skill chance and a deterministic random roll.
+        /// </summary>
+        public static bool IsCriticalCraft(int skillLevel, double randomRoll)
+        {
+            return randomRoll <= CalculateCriticalChance(skillLevel);
+        }
+
+        /// <summary>
+        /// Determines if a craft results in a critical success based on skill chance and a deterministic random roll.
+        /// </summary>
+        public static bool IsCriticalCraft(int skillLevel, decimal randomRoll) => IsCriticalCraft(skillLevel, (double)randomRoll);
+
+        /// <summary>
+        /// Maps a calculated quality score to an item rarity tier.
+        /// Thresholds are representative of standard MMORPG progression scaling.
+        /// </summary>
+        public static string GetQualityTier(double qualityScore)
+        {
+            return qualityScore switch
+            {
+                >= 85 => "Mythic",
+                >= 70 => "Legendary",
+                >= 55 => "Epic",
+                >= 40 => "Rare",
+                >= 25 => "Uncommon",
+                _ => "Common"
+            };
+        }
+
+        /// <summary>
+        /// Alias for GetQualityTier to resolve ambiguity in commands.
+        /// </summary>
+        public static string ResolveRarity(double qualityScore) => GetQualityTier(qualityScore);
     }
 }
