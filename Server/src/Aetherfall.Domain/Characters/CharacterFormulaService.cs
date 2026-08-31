@@ -46,7 +46,7 @@ namespace Aetherfall.Domain.Characters
                 MaxStamina: (decimal)CalculateStamina(level, attributes.Dexterity, attributes.Vitality),
                 PhysicalDamage: (decimal)physicalDamage,
                 SpellDamage: (decimal)spellDamage,
-                CriticalChance: criticalChance
+                CriticalChance: (decimal)criticalChance
             );
         }
     }

@@ -2,20 +2,16 @@ using System;
 
 namespace Aetherfall.Domain.Combat
 {
-    public enum CombatActionType
-    {
-        LightAttack,
-        HeavyAttack,
-        Block,
-        Dodge
-    }
-
     public static class CombatFormulaService
     {
+        /// <summary>
+        /// Resolves a combat action between an attacker and defender.
+        /// Returns a CombatResolution record containing damage dealt, stamina spent, and outcome flags.
+        /// </summary>
         public static CombatResolution Resolve(CombatActionType actionType, CombatSnapshot attacker, CombatSnapshot defender, decimal critChanceSeed)
         {
             if (critChanceSeed is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(critChanceSeed));
-
+            
             var baseDamage = actionType switch
             {
                 CombatActionType.LightAttack => attacker.WeaponDamage * 1.0m,
@@ -51,6 +47,9 @@ namespace Aetherfall.Domain.Combat
             return new CombatResolution(decimal.Round(Math.Max(0, damage), 2), staminaSpent, false, defender.IsBlocking, critical);
         }
 
+        /// <summary>
+        /// Calculates DPS and duration for a persistent effect or attack.
+        /// </summary>
         public static (double dps, int duration) CalculateDpsAndDuration(decimal baseDamage, int duration)
         {
             return ((double)baseDamage, duration);
