@@ -2,6 +2,14 @@ using System;
 
 namespace Aetherfall.Domain.Combat
 {
+    public enum CombatActionType
+    {
+        LightAttack,
+        HeavyAttack,
+        Block,
+        Dodge
+    }
+
     /// <summary>
     /// Handles combat resolution, damage calculation, and critical hits.
     /// Implements the exact formulas from the 06-combat-systems design document.
@@ -56,7 +64,7 @@ namespace Aetherfall.Domain.Combat
         /// </summary>
         public static (double dps, int duration) CalculateDpsAndDuration(decimal baseDamage, int duration)
         {
-            return (dps: baseDamage, duration);
+            return (baseDamage, duration);
         }
     }
 }
