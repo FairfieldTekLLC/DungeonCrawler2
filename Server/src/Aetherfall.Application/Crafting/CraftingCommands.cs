@@ -2,6 +2,7 @@ using Aetherfall.Application.Abstractions;
 using Aetherfall.Contracts.Crafting;
 using Aetherfall.Domain.Crafting;
 using Aetherfall.Domain.Inventory;
+using Aetherfall.Domain.Common;
 
 namespace Aetherfall.Application.Crafting;
 
@@ -33,13 +34,13 @@ public sealed class CraftItemHandler : ICommandHandler<CraftItemCommand, CraftIt
             (double)command.StationQuality, 
             (double)command.RandomRoll);
         
-        var rarity = CraftingFormulaService.ResolveRarity(qualityScore);
+        // ResolveRarity returns a string directly, so we pass it to the response constructor
+        var rarityString = CraftingFormulaService.ResolveRarity(qualityScore);
         var critChance = CraftingFormulaService.CalculateCriticalChance(recipe.RequiredSkill);
 
-        character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarity, 1, Domain.Common.EquipmentSlot.MainHand));
+        character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarityString, 1, Domain.Common.EquipmentSlot.MainHand));
         await _characters.UpdateAsync(character, cancellationToken);
 
-        var rarityEnum = Enum.Parse<Rarity>(rarity);
-        return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarityEnum, (decimal)qualityScore, critChance));
+        return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarityString, (decimal)qualityScore, (decimal)critChance));
     }
 }
