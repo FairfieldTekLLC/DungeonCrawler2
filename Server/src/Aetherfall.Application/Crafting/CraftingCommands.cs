@@ -39,6 +39,7 @@ public sealed class CraftItemHandler : ICommandHandler<CraftItemCommand, CraftIt
         character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarity, 1, Domain.Common.EquipmentSlot.MainHand));
         await _characters.UpdateAsync(character, cancellationToken);
 
-        return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarity.ToString(), qualityScore, critChance));
+        var rarityEnum = Enum.Parse<Rarity>(rarity);
+        return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarityEnum, (decimal)qualityScore, critChance));
     }
 }
