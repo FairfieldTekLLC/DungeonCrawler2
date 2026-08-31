@@ -10,16 +10,8 @@ namespace Aetherfall.Domain.Combat
         Dodge
     }
 
-    /// <summary>
-    /// Handles combat resolution, damage calculation, and critical hits.
-    /// Implements the exact formulas from the 06-combat-systems design document.
-    /// </summary>
     public static class CombatFormulaService
     {
-        /// <summary>
-        /// Resolves a combat action between an attacker and defender.
-        /// Returns a CombatResolution record containing damage dealt, stamina spent, and outcome flags.
-        /// </summary>
         public static CombatResolution Resolve(CombatActionType actionType, CombatSnapshot attacker, CombatSnapshot defender, decimal critChanceSeed)
         {
             if (critChanceSeed is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(critChanceSeed));
@@ -59,12 +51,9 @@ namespace Aetherfall.Domain.Combat
             return new CombatResolution(decimal.Round(Math.Max(0, damage), 2), staminaSpent, false, defender.IsBlocking, critical);
         }
 
-        /// <summary>
-        /// Calculates DPS and duration for a persistent effect or attack.
-        /// </summary>
         public static (double dps, int duration) CalculateDpsAndDuration(decimal baseDamage, int duration)
         {
-            return (baseDamage, duration);
+            return ((double)baseDamage, duration);
         }
     }
 }
