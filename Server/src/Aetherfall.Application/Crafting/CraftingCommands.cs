@@ -34,11 +34,11 @@ public sealed class CraftItemHandler : ICommandHandler<CraftItemCommand, CraftIt
             (double)command.StationQuality, 
             (double)command.RandomRoll);
         
-        // ResolveRarity returns a string directly, so we pass it to the response constructor
         var rarityString = CraftingFormulaService.ResolveRarity(qualityScore);
+        var rarityEnum = Enum.Parse<Rarity>(rarityString);
         var critChance = CraftingFormulaService.CalculateCriticalChance(recipe.RequiredSkill);
 
-        character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarityString, 1, Domain.Common.EquipmentSlot.MainHand));
+        character.Inventory.AddItem(new InventoryItem(Guid.NewGuid(), recipe.ResultItemDefinitionId, Domain.Common.ItemCategory.Weapon, rarityEnum, 1, Domain.Common.EquipmentSlot.MainHand));
         await _characters.UpdateAsync(character, cancellationToken);
 
         return Result<CraftItemResponse>.Success(new CraftItemResponse(recipe.ResultItemDefinitionId, rarityString, (decimal)qualityScore, (decimal)critChance));
