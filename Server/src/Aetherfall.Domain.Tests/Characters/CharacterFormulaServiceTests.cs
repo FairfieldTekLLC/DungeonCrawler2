@@ -20,9 +20,9 @@ public sealed class CharacterFormulaServiceTests
     }
 
     [Fact]
-    public void ApplySoftCap_ReducesGrowthPast250()
+    public void ApplyAttributeCaps_ReducesGrowthPast250()
     {
-        var result = CharacterFormulaService.ApplySoftCap(300);
-        Assert.Equal(275m, result);
+        var result = CharacterFormulaService.ApplyAttributeCaps(300);
+        Assert.Equal(275, result);
     }
 }

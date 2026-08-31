@@ -10,8 +10,8 @@ public sealed class QuestAggregateTests
     {
         var quest = new QuestAggregate(Guid.NewGuid(), "quest.bastion.wolf-hunt", new[]
         {
-            new QuestObjective("wolves", ObjectiveType.Kill, 2),
-            new QuestObjective("charms", ObjectiveType.Collect, 1)
+            new QuestObjective("wolves", Domain.Quests.ObjectiveType.Kill, 2),
+            new QuestObjective("charms", Domain.Quests.ObjectiveType.Collect, 1)
         });
 
         quest.Start();

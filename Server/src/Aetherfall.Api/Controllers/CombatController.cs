@@ -14,7 +14,7 @@ public sealed class CombatController : ControllerBase
     [HttpPost("resolve")]
     public async Task<ActionResult<CombatResolutionResponse>> ResolveAsync([FromBody] ResolveCombatRequest request, [FromServices] ICommandHandler<ResolveCombatCommand, CombatResolutionResponse> handler, CancellationToken cancellationToken)
     {
-        var result = await handler.HandleAsync(new ResolveCombatCommand(request.ActionType, request.AttackerId, request.DefenderId, request.CritSeed), cancellationToken);
+        var result = await handler.HandleAsync(new ResolveCombatCommand(request.ActionType.ToString(), request.AttackerId), cancellationToken);
         return result.Succeeded ? Ok(result.Value) : BadRequest(result.Error);
     }
 }

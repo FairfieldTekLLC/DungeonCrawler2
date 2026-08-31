@@ -12,8 +12,8 @@ public sealed class InMemoryQuestDefinitionRepository : IQuestDefinitionReposito
         {
             "quest.bastion.wolf-hunt" => new QuestAggregate(Guid.NewGuid(), questDefinitionId, new[]
             {
-                new QuestObjective("slay-wolves", ObjectiveType.Kill, 3),
-                new QuestObjective("recover-charms", ObjectiveType.Collect, 2)
+                new QuestObjective("slay-wolves", Domain.Quests.ObjectiveType.Kill, 3),
+                new QuestObjective("recover-charms", Domain.Quests.ObjectiveType.Collect, 2)
             }),
             _ => null
         };
