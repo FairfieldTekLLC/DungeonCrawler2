@@ -1,4 +1,5 @@
 using System;
+using Aetherfall.Domain.Common;
 
 namespace Aetherfall.Domain.Combat
 {

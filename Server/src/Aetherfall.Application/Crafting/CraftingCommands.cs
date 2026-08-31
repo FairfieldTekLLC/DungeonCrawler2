@@ -26,7 +26,13 @@ public sealed class CraftItemHandler : ICommandHandler<CraftItemCommand, CraftIt
         var recipe = await _recipes.GetByIdAsync(command.RecipeId, cancellationToken);
         if (recipe is null) return Result<CraftItemResponse>.Failure("Recipe not found.");
 
-        var qualityScore = CraftingFormulaService.CalculateQualityScore(recipe.RequiredSkill, command.MaterialQuality, command.SpecializationBonus, command.StationQuality, command.RandomRoll);
+        var qualityScore = CraftingFormulaService.CalculateQualityScore(
+            recipe.RequiredSkill, 
+            (double)command.MaterialQuality, 
+            (int)command.SpecializationBonus, 
+            (double)command.StationQuality, 
+            (double)command.RandomRoll);
+        
         var rarity = CraftingFormulaService.ResolveRarity(qualityScore);
         var critChance = CraftingFormulaService.CalculateCriticalChance(recipe.RequiredSkill);
 

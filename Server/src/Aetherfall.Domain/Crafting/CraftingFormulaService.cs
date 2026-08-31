@@ -48,6 +48,11 @@ namespace Aetherfall.Domain.Crafting
         }
 
         /// <summary>
+        /// Determines if a craft results in a critical success based on skill chance and a deterministic random roll.
+        /// </summary>
+        public static bool IsCriticalCraft(int skillLevel, decimal randomRoll) => IsCriticalCraft(skillLevel, (double)randomRoll);
+
+        /// <summary>
         /// Maps a calculated quality score to an item rarity tier.
         /// Thresholds are representative of standard MMORPG progression scaling.
         /// </summary>
@@ -63,5 +68,10 @@ namespace Aetherfall.Domain.Crafting
                 _ => "Common"
             };
         }
+
+        /// <summary>
+        /// Alias for GetQualityTier to resolve ambiguity in commands.
+        /// </summary>
+        public static string ResolveRarity(double qualityScore) => GetQualityTier(qualityScore);
     }
 }

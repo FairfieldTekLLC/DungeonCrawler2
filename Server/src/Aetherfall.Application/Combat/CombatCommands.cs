@@ -1,36 +1,15 @@
-using Aetherfall.Application.Abstractions;
-using Aetherfall.Contracts.Combat;
-using Aetherfall.Domain.Combat;
+using System;
 using Aetherfall.Domain.Common;
+using Aetherfall.Domain.Combat;
 
-namespace Aetherfall.Application.Combat;
-
-public sealed record ResolveCombatCommand(CombatActionType ActionType, Guid AttackerId, Guid DefenderId, decimal CritSeed);
-
-public sealed class ResolveCombatHandler : ICommandHandler<ResolveCombatCommand, CombatResolutionResponse>
+namespace Aetherfall.Application.Combat
 {
-    private readonly ICharacterRepository _characters;
-
-    public ResolveCombatHandler(ICharacterRepository characters)
+    public static class CombatCommands
     {
-        _characters = characters;
-    }
-
-    public async Task<Result<CombatResolutionResponse>> HandleAsync(ResolveCombatCommand command, CancellationToken cancellationToken)
-    {
-        var attacker = await _characters.GetByIdAsync(command.AttackerId, cancellationToken);
-        var defender = await _characters.GetByIdAsync(command.DefenderId, cancellationToken);
-        if (attacker is null || defender is null) return Result<CombatResolutionResponse>.Failure("Combatants not found.");
-
-        var attackState = new CombatSnapshot(attacker.Id, attacker.Progression.Level, attacker.Stats.PhysicalDamage, attacker.Stats.SpellDamage, 120m, 0.35m, 0.1m, false, false);
-        var defendState = new CombatSnapshot(defender.Id, defender.Progression.Level, defender.Stats.PhysicalDamage, defender.Stats.SpellDamage, 160m, 0.45m, 0.18m, command.ActionType == CombatActionType.Block, command.ActionType == CombatActionType.Dodge);
-        var resolution = CombatFormulaService.Resolve(command.ActionType, attackState, defendState, command.CritSeed);
-
-        defender.Resources.ApplyDamage(resolution.DamageDealt);
-        attacker.Resources.SpendStamina(resolution.StaminaSpent);
-        await _characters.UpdateAsync(attacker, cancellationToken);
-        await _characters.UpdateAsync(defender, cancellationToken);
-
-        return Result<CombatResolutionResponse>.Success(new CombatResolutionResponse(resolution.DamageDealt, resolution.StaminaSpent, resolution.WasDodged, resolution.WasBlocked, resolution.WasCritical));
+        public static CombatResolution Execute(string action, CombatSnapshot attacker, CombatSnapshot defender, decimal critChanceSeed)
+        {
+            var combatActionType = (CombatActionType)Enum.Parse(typeof(CombatActionType), action);
+            return CombatFormulaService.Resolve(combatActionType, attacker, defender, critChanceSeed);
+        }
     }
 }
